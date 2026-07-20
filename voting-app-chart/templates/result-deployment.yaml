@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: result-deploy
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: result-app
+    {{- include "voting-app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.resultApp.replicas }}
+  selector:
+    matchLabels:
+      app: result-app
+  template:
+    metadata:
+      labels:
+        app: result-app
+        {{- include "voting-app.labels" . | nindent 8 }}
+    spec:
+      enableServiceLinks: false
+      containers:
+      - name: result-container
+        image: {{ .Values.resultApp.image }}
+        ports:
+        - containerPort: {{ .Values.resultApp.containerPort }}
+          name: web
+        envFrom:
+        - configMapRef:
+            name: {{ .Release.Name }}-voting-config
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-voting-secret
+              key: postgres-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-voting-secret
+              key: postgres-password
+        - name: OPTION_A
+          value: {{ .Values.resultApp.optionA | quote }}
+        - name: OPTION_B
+          value: {{ .Values.resultApp.optionB | quote }}

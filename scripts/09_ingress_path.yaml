@@ -1,0 +1,48 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: voting-path-ingress
+  namespace: dev
+  labels:
+    team: devops
+    project: training
+  annotations:
+    # Rewrite annotation: strips /voting or /result before sending to backend app
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: path.k8s-bootcamp.local
+    http:
+      paths:
+      - path: /voting
+        pathType: Prefix
+        backend:
+          service:
+            name: voting-service
+            port:
+              number: 80
+      - path: /result
+        pathType: Prefix
+        backend:
+          service:
+            name: result-service
+            port:
+              number: 80
+  - host: path.127.0.0.1.nip.io
+    http:
+      paths:
+      - path: /voting
+        pathType: Prefix
+        backend:
+          service:
+            name: voting-service
+            port:
+              number: 80
+      - path: /result
+        pathType: Prefix
+        backend:
+          service:
+            name: result-service
+            port:
+              number: 80

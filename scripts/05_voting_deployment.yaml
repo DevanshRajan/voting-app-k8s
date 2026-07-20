@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: voting-deploy
+  namespace: dev
+  labels:
+    app: voting-app
+    team: devops
+    project: training
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: voting-app
+  template:
+    metadata:
+      labels:
+        app: voting-app
+        team: devops
+        project: training
+    spec:
+      enableServiceLinks: false
+      containers:
+      - name: voting-container
+        image: schoolofdevops/vote:v1
+        ports:
+        - containerPort: 8080
+          name: web
+        envFrom:
+        - configMapRef:
+            name: voting-config
+        env:
+        - name: OPTION_A
+          value: "Spain"
+        - name: OPTION_B
+          value: "Argentina"
+

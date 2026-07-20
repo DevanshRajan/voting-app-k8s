@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: result-deploy
+  namespace: dev
+  labels:
+    app: result-app
+    team: devops
+    project: training
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: result-app
+  template:
+    metadata:
+      labels:
+        app: result-app
+        team: devops
+        project: training
+    spec:
+      enableServiceLinks: false
+      containers:
+      - name: result-container
+        image: schoolofdevops/result:v1
+        ports:
+        - containerPort: 8080
+          name: web
+        envFrom:
+        - configMapRef:
+            name: voting-config
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: voting-secret
+              key: postgres-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: voting-secret
+              key: postgres-password
+        - name: OPTION_A
+          value: "Spain"
+        - name: OPTION_B
+          value: "Argentina"
+

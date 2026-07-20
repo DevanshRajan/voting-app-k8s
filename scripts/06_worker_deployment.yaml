@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-deploy
+  namespace: dev
+  labels:
+    app: worker
+    team: devops
+    project: training
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+        team: devops
+        project: training
+    spec:
+      enableServiceLinks: false
+      containers:
+      - name: worker
+        image: schoolofdevops/worker:v1
+        envFrom:
+        - configMapRef:
+            name: voting-config
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: voting-secret
+              key: postgres-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: voting-secret
+              key: postgres-password
+

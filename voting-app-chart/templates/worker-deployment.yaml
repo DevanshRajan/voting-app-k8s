@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-deploy
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: worker
+    {{- include "voting-app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.workerApp.replicas }}
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+        {{- include "voting-app.labels" . | nindent 8 }}
+    spec:
+      enableServiceLinks: false
+      containers:
+      - name: worker
+        image: {{ .Values.workerApp.image }}
+        envFrom:
+        - configMapRef:
+            name: {{ .Release.Name }}-voting-config
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-voting-secret
+              key: postgres-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-voting-secret
+              key: postgres-password

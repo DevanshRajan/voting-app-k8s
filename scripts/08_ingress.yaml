@@ -1,0 +1,52 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: voting-ingress
+  namespace: dev
+  labels:
+    team: devops
+    project: training
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: vote.k8s-bootcamp.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: voting-service
+            port:
+              number: 80
+  - host: result.k8s-bootcamp.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: result-service
+            port:
+              number: 80
+  - host: vote.127.0.0.1.nip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: voting-service
+            port:
+              number: 80
+  - host: result.127.0.0.1.nip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: result-service
+            port:
+              number: 80
+
