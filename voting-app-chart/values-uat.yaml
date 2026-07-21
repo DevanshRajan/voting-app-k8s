@@ -22,7 +22,7 @@ postgres:
 
 # Python Voting Frontend Configuration
 votingApp:
-  replicas: 2
+  replicas: 1
   image: schoolofdevops/vote:v1
   containerPort: 8080
   servicePort: 80
