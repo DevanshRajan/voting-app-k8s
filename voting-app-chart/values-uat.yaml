@@ -1,0 +1,53 @@
+# Default values for voting-app-chart.
+
+namespace: uat
+
+# Common Labels
+labels:
+  team: devops
+  project: training
+
+# Redis Message Queue Configuration
+redis:
+  image: redis:alpine
+  containerPort: 6379
+
+# PostgreSQL Database Configuration
+postgres:
+  image: postgres:15-alpine
+  containerPort: 5432
+  user: postgres
+  password: postgres
+  dbName: postgres
+
+# Python Voting Frontend Configuration
+votingApp:
+  replicas: 2
+  image: schoolofdevops/vote:v1
+  containerPort: 8080
+  servicePort: 80
+  nodePort: 31000
+  optionA: "Spain"
+  optionB: "Argentina"
+
+# Background Worker Configuration
+workerApp:
+  replicas: 1
+  image: schoolofdevops/worker:v1
+
+# Node.js Result Visualizer Configuration
+resultApp:
+  replicas: 1
+  image: schoolofdevops/result:v1
+  containerPort: 8080
+  servicePort: 80
+  nodePort: 31001
+  optionA: "Spain"
+  optionB: "Argentina"
+
+# Ingress Configuration
+ingress:
+  enabled: true
+  className: nginx
+  hostDomain: 127.0.0.1.nip.io
+  localDomain: k8s-bootcamp.local
